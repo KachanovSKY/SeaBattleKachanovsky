@@ -307,6 +307,16 @@ public class MyPanel extends JPanel {
         }
     }
 
+    public void setEasy(){
+        //Доработка алгоритма
+    }
+    public void setMedium(){
+        //Доработка алгоритма
+    }
+    public void setHard(){
+        //Доработка алгоритма
+    }
+
     public void start() {
         rasstanovka = false;
         Game.PvE = false;

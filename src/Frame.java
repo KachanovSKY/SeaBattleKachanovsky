@@ -100,22 +100,20 @@ public class Frame extends JFrame {
         itemEasy.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                pole.exit(); }
+                pole.setEasy(); }
         });
         itemMedium=new JMenuItem("Medium");
         itemMedium.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                pole.exit();
+                pole.setMedium();
             }
         });
         itemHard=new JMenuItem("Hard");
         itemHard.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                pole.exit();
+                pole.setHard();
             }
         });
 
