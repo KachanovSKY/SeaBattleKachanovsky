@@ -1,6 +1,12 @@
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 public class SaveProgress {
+    static Logger logger;
 
     public static void LoadFile(String path) throws IOException{
 
@@ -247,6 +253,30 @@ public class SaveProgress {
             filewriter.write("\n\n#computerMove\n\n");
             filewriter.write(String.valueOf(tmpComputerMove));
             filewriter.write("\n");
+        }
+    }
+
+    public static void genLogFile(){
+        SimpleDateFormat format = new SimpleDateFormat("d-M-y_HH.mm.ss");
+        logger = Logger.getLogger(Game.class.getName());
+        FileHandler fh;
+        try {
+            fh = new FileHandler("/Users/vladislavkacanovskij/Documents/Программы/IdeaProjects/seaBattle-master/log_files/Log_" +
+                    format.format(Calendar.getInstance().getTime()).toString() + ".log");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        logger.addHandler(fh);
+        SimpleFormatter formatter = new SimpleFormatter();
+        fh.setFormatter(formatter);
+    }
+
+    public static void logFile(String message){
+
+        try {
+            logger.info(message);
+        } catch (SecurityException e) {
+            e.printStackTrace();
         }
     }
 }

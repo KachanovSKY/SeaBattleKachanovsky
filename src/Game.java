@@ -1,5 +1,6 @@
 
 import javax.swing.JOptionPane; // вывода диалогового окна о победе/проигрыше
+import java.util.Date;
 
 public class Game {
     public static int[][] masPlay; // массив игрока
@@ -20,6 +21,9 @@ public class Game {
     public final int pause=300; // время паузы при выстреле компьютера
     public static boolean myMove; // true - если сейчас ход игрока
     public static boolean computerMove;
+
+
+
     Thread thread=new Thread(); // Все атаки компьютера будут происходить в новом потоке
     Game() { // Конструктор двух полей
         masPlay = new int[10][10];
@@ -29,7 +33,14 @@ public class Game {
 
     public void start() { // Происходит обнуление массивов и расстановка кораблей
 
+        // Создаю логфайл сессии
+
+        SaveProgress.genLogFile();
+
         while (thread.isAlive()) PvE = false; // Ждем если комп не сходил
+
+        Date date = new Date();
+        SaveProgress.logFile("Start Game: " + date.toString() + "\n\n");
 
         countComputerMove =0;
         countPlayerMove =0;
@@ -62,7 +73,7 @@ public class Game {
         countPlayerMove++;
         mas[i][j] += 7;
 
-        ifDeath(mas, i, j);
+        ifDeath(mas, i, j, true);
         ifEndGame();
 
         thread =new Thread(new Runnable() {
@@ -70,6 +81,7 @@ public class Game {
             public void run() {
                 //если промах
                 if (masComp[i][j] < 8) {
+                    SaveProgress.logFile(String.format("Player shot %d,%d; status: miss\n", i, j));
                     myMove = false;
                     computerMove = true; //передаем ход компьютеру
                     // Ходит компьютер - пока попадает в цель
@@ -114,6 +126,7 @@ public class Game {
                 JOptionPane.showMessageDialog(null,
                         "Вы проиграли! Попробуйте еще раз",
                         "Вы проиграли", JOptionPane.INFORMATION_MESSAGE);
+                SaveProgress.logFile("Computer win!");
 
             } else if (sumComp == sumEnd) {
                 endGame = 1;
@@ -121,6 +134,7 @@ public class Game {
                 JOptionPane.showMessageDialog(null,
                         "Поздравляю! Вы выиграли!",
                         "Вы выиграли", JOptionPane.INFORMATION_MESSAGE);
+                SaveProgress.logFile("Player win!");
             }
             }
         }
@@ -153,25 +167,41 @@ public class Game {
         C4/=4;C3/=3;C2/=2;
     }
 
-    private void ifDeath(int mas[][], int i, int j){ // Метод проверяет убита ли палуба
-        if (mas[i][j]==8) { //Если однопалубный
-            mas[i][j] += 7; //прибавляем к убитому +7
-            deathRing(mas,i,j);//Уменьшаем окружение убитого на 1
-        }
-        else if (mas[i][j]==9){
-            analizDeath(mas,i,j,2);
-        }
-        else if (mas[i][j]==10){
-            analizDeath(mas,i,j,3);
-        }
-        else if (mas[i][j]==11){
-            analizDeath(mas,i,j,4);
+    private void ifDeath(int mas[][], int i, int j, boolean player){ // Метод проверяет убита ли палуба
+        if (player) {
+            if (mas[i][j] == 8) { //Если однопалубный
+                SaveProgress.logFile("Player kill 1-palubs ship\n");
+                mas[i][j] += 7; //прибавляем к убитому +7
+                deathRing(mas, i, j);//Уменьшаем окружение убитого на 1
+            } else if (mas[i][j] == 9) {
+                analizDeath(mas, i, j, 2, true);
+            } else if (mas[i][j] == 10) {
+                analizDeath(mas, i, j, 3, true);
+            } else if (mas[i][j] == 11) {
+                analizDeath(mas, i, j, 4, true);
+            }
+        } else {
+            if (mas[i][j]==8) { //Если однопалубный
+                SaveProgress.logFile("Computer kill 1-palubs ship\n");
+                mas[i][j] += 7; //прибавляем к убитому +7
+                deathRing(mas,i,j);//Уменьшаем окружение убитого на 1
+            }
+            else if (mas[i][j]==9){
+                analizDeath(mas,i,j,2, false);
+            }
+            else if (mas[i][j]==10){
+                analizDeath(mas,i,j,3, false);
+            }
+            else if (mas[i][j]==11){
+                analizDeath(mas,i,j,4, false);
+            }
         }
     }
 
 
-    private void analizDeath(int[][] mas, int i, int j, int countPalubs) { // Анализ, убит ли корабль
+    private void analizDeath(int[][] mas, int i, int j, int countPalubs, boolean player) { // Анализ, убит ли корабль
         //Количество раненых палуб
+        boolean killed = false;
         int countInjured=0;
         //Выполняем подсчет раненых палуб
         for (int x=i-(countPalubs-1);x<=i+(countPalubs-1);x++) {
@@ -188,12 +218,25 @@ public class Game {
                 // Если это палуба раненого корабля
                     if (ifMasOut(x, y)&&(mas[x][y]==countPalubs+7)) {
                         // помечаем палубой убитого корабля
+                        killed = true;
+
                         mas[x][y]+=7;
                         // уменьшаем на 1 окружение убитого корабля
                         deathRing(mas, x, y);
                     }
                 }
             }
+            if (killed) {
+                if (player)
+                    SaveProgress.logFile(String.format("Player kill %d-pallubs ship\n", countPalubs));
+                else
+                    SaveProgress.logFile(String.format("Computer kill %d-pallubs ship\n", countPalubs));
+            }
+        } else {
+            if (player)
+                SaveProgress.logFile(String.format("Player shot %d,%d; status: hit\n", i, j));
+            else
+                SaveProgress.logFile(String.format("Computer shot %d,%d; status: hit\n", i, j));
         }
     }
 
@@ -258,24 +301,32 @@ public class Game {
                             if (napr == 0 && ifMasOut(i - 1, j) && (mas[i - 1][j] <= 4) && (mas[i - 1][j] != -2)) {
                                 mas[i - 1][j] += 7;
                                 //проверяем, убили или нет
-                                ifDeath(mas, i - 1, j);
+                                ifDeath(mas, i - 1, j, false);
                                 if (mas[i - 1][j] >= 8) hit = true;
+                                else
+                                    SaveProgress.logFile(String.format("Computer shot %d,%d; status: miss\n", i-1, j));
                                 //прерываем цикл
                                 break _for1;
                             } else if (napr == 1 && ifMasOut(i + 1, j) && (mas[i + 1][j] <= 4) && (mas[i + 1][j] != -2)) {
                                 mas[i + 1][j] += 7;
-                                ifDeath(mas, i + 1, j);
+                                ifDeath(mas, i + 1, j, false);
                                 if (mas[i + 1][j] >= 8) hit = true;
+                                else
+                                    SaveProgress.logFile(String.format("Computer shot %d,%d; status: miss\n", i+1, j));
                                 break _for1;
                             } else if (napr == 2 && ifMasOut(i, j - 1) && (mas[i][j - 1] <= 4) && (mas[i][j - 1] != -2)) {
                                 mas[i][j - 1] += 7;
-                                ifDeath(mas, i, j - 1);
+                                ifDeath(mas, i, j - 1, false);
                                 if (mas[i][j - 1] >= 8) hit = true;
+                                else
+                                    SaveProgress.logFile(String.format("Computer shot %d,%d; status: miss\n",i, j-1));
                                 break _for1;
                             } else if (napr == 3 && ifMasOut(i, j + 1) && (mas[i][j + 1] <= 4) && (mas[i][j + 1] != -2)) {
                                 mas[i][j + 1] += 7;
-                                ifDeath(mas, i, j + 1);
+                                ifDeath(mas, i, j + 1, false);
                                 if (mas[i][j + 1] >= 8) hit = true;
+                                else
+                                    SaveProgress.logFile(String.format("Computer shot %d,%d; status: miss\n", i, j+1));
                                 break _for1;
                             }
                         }
@@ -283,24 +334,24 @@ public class Game {
                         if (horizontal) { //по горизонтали
                             if (ifMasOut(i - 1, j) && (mas[i - 1][j] <= 4) && (mas[i - 1][j] != -2)) {
                                 mas[i - 1][j] += 7;
-                                ifDeath(mas, i - 1, j);
+                                ifDeath(mas, i - 1, j, false);
                                 if (mas[i - 1][j] >= 8) hit = true;
                                 break _for1;
                             } else if (ifMasOut(i + 1, j) && (mas[i + 1][j] <= 4) && (mas[i + 1][j] != -2)) {
                                 mas[i + 1][j] += 7;
-                                ifDeath(mas, i + 1, j);
+                                ifDeath(mas, i + 1, j, false);
                                 if (mas[i + 1][j] >= 8) hit = true;
                                 break _for1;
                             }
                         }//по вертикали
                         else if (ifMasOut(i, j - 1) && (mas[i][j - 1] <= 4) && (mas[i][j - 1] != -2)) {
                             mas[i][j - 1] += 7;
-                            ifDeath(mas, i, j - 1);
+                            ifDeath(mas, i, j - 1, false);
                             if (mas[i][j - 1] >= 8) hit = true;
                             break _for1;
                         } else if (ifMasOut(i, j + 1) && (mas[i][j + 1] <= 4) && (mas[i][j + 1] != -2)) {
                             mas[i][j + 1] += 7;
-                            ifDeath(mas, i, j + 1);
+                            ifDeath(mas, i, j + 1, false);
                             if (mas[i][j + 1] >= 8) hit = true;
                             break _for1;
                         }
@@ -320,10 +371,12 @@ public class Game {
                         //делаем выстрел
                         mas[i][j] += 7;
                         //проверяем, что убит
-                        ifDeath(mas, i, j);
+                        ifDeath(mas, i, j, false);
                         // если произошло попадание
                         if (mas[i][j] >= 8)
                             hit = true;
+                        else
+                            SaveProgress.logFile(String.format("Computer shot %d,%d; status: miss\n", j, i));
                         //выстрел произошел
                         injured = true;
                         //прерываем цикл

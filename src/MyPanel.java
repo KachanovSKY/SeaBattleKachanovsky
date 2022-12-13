@@ -227,9 +227,7 @@ public class MyPanel extends JPanel {
                             if (game.masPlay[i][j] == 11)
                                 g.drawImage(ranen, DXY + H * i, DXY + H * j, H, H, null);
                         }
-//                    }else if ((game.masPlay[i][j] >= 8) && (game.masPlay[i][j] <= 11)) {
-//                        //ранен
-//                        g.drawImage(ranen, DXY + + H * i, DXY + H * j, H, H, null);
+//
                     }else if ((game.masPlay[i][j] >= 15)) {
                         //убит
                         g.drawImage(killed, DXY + H * i, DXY + H * j, H, H, null);
@@ -359,7 +357,6 @@ public class MyPanel extends JPanel {
                        int i=(mX-(DXY+13*H))/H;
                        int j=(mY-DXY)/H;
                         if ((i>=0 && i<=9) && (j>=0 && j<=9)) {
-                            // System.out.println("Мы нажали на " + i+ " " +j);
                             if (game.masComp[i][j] <= 4 && game.masComp[i][j] >= -1) {
                                 //-1 это окружение не убитого корабля
                                 game.attack(game.masComp, i, j);
