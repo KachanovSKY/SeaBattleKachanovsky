@@ -25,7 +25,7 @@ public class MyPanel extends JPanel {
     public boolean vert=true; //направление расстановки
     private JButton checkNapr;
     public static boolean rasstanovka;
-
+    public String difficult;
 
     public MyPanel() {
         addMouseListener(new Mouse());
@@ -33,6 +33,7 @@ public class MyPanel extends JPanel {
         setFocusable(true);
         game = new Game();
         setSize(1200,800);
+        difficult = new String("Easy");
         try {
             ranen = ImageIO.read(getClass().getResource("image/ranen.png"));
             boom = ImageIO.read(getClass().getResource("image/boom.png"));
@@ -141,6 +142,8 @@ public class MyPanel extends JPanel {
         g.drawString(String.valueOf(game.countPlayerMove), DXY + 29 * H, DXY + 18 * H - (H / 4));
         g.drawString("Ходов комьютера: ", DXY + 24 * H, DXY + 19 * H - (H/4));
         g.drawString(String.valueOf(game.countComputerMove), DXY + 30 * H + (H / 2), DXY + 19 * H - (H / 4));
+        g.drawString("Сложность: ", DXY + 0 * H, DXY + 19 * H - (H / 4));
+        g.drawString(String.valueOf(difficult), DXY + 4 * H, DXY + 19 * H - (H / 4));
 
         //Выводим цифры и буквы
         for (int i = 1; i <= 10; i++) {
@@ -307,13 +310,17 @@ public class MyPanel extends JPanel {
 
     public void setEasy(){
         //Доработка алгоритма
-    }
-    public void setMedium(){
-        //Доработка алгоритма
+        Game.difficulty = 0;
+        difficult = "Easy";
     }
     public void setHard(){
         //Доработка алгоритма
+        Game.difficulty = 1;
+        difficult = "Hard";
     }
+//    public void setHard(){
+//        //Доработка алгоритма
+//    }
 
     public void start() {
         rasstanovka = false;

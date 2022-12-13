@@ -21,8 +21,8 @@ public class Game {
     public final int pause=300; // время паузы при выстреле компьютера
     public static boolean myMove; // true - если сейчас ход игрока
     public static boolean computerMove;
-
-
+    public static int difficulty;// сложность игры
+    boolean hit = false; // попал комп или нет
 
     Thread thread=new Thread(); // Все атаки компьютера будут происходить в новом потоке
     Game() { // Конструктор двух полей
@@ -100,42 +100,43 @@ public class Game {
         thread.start();
     }
 
-    public void ifEndGame(){ // проверка на конец игры
+    public void ifEndGame() { // проверка на конец игры
         // Сумма массива, когда все корабли убиты, равна 15*4+16*2*3+17*3*2+18*4 = 330
         // Суммируем элементы массива, и если сумма равна 330, то заканчиваем игру
-        if (endGame==0){
+        if (endGame == 0) {
 
-        int sumEnd=330; //когда все корабли убиты
-        int sumPlay=0; // Сумма убитых палуб игрока
-        int sumComp=0; // Сумма убитых палуб компьютера
+            int sumEnd = 330; //когда все корабли убиты
+            int sumPlay = 0; // Сумма убитых палуб игрока
+            int sumComp = 0; // Сумма убитых палуб компьютера
 
-        countDeathComputerShip(masComp);
-        countDeathPlayerShip(masPlay);
+            countDeathComputerShip(masComp);
+            countDeathPlayerShip(masPlay);
 
-            if (endGame==0) {
+            if (endGame == 0) {
                 for (int i = 0; i < 10; i++) {
                     for (int j = 0; j < 10; j++) {
-                    // Суммируем подбитые палубы
-                    if (masPlay[i][j] >= 15) sumPlay += masPlay[i][j];
-                    if (masComp[i][j] >= 15) sumComp += masComp[i][j];
+                        // Суммируем подбитые палубы
+                        if (masPlay[i][j] >= 15) sumPlay += masPlay[i][j];
+                        if (masComp[i][j] >= 15) sumComp += masComp[i][j];
+                    }
                 }
-            }
-            if (sumPlay == sumEnd) {
-                endGame = 2;
-                //выводим диалоговое окно игроку
-                JOptionPane.showMessageDialog(null,
-                        "Вы проиграли! Попробуйте еще раз",
-                        "Вы проиграли", JOptionPane.INFORMATION_MESSAGE);
-                SaveProgress.logFile("Computer win!");
-
-            } else if (sumComp == sumEnd) {
-                endGame = 1;
-                //выводим диалоговое окно игроку
-                JOptionPane.showMessageDialog(null,
-                        "Поздравляю! Вы выиграли!",
-                        "Вы выиграли", JOptionPane.INFORMATION_MESSAGE);
-                SaveProgress.logFile("Player win!");
-            }
+                if (sumPlay == sumEnd) {
+                    hit = false;
+                    endGame = 2;
+                    //выводим диалоговое окно игроку
+                    JOptionPane.showMessageDialog(null,
+                            "Вы проиграли! Попробуйте еще раз",
+                            "Вы проиграли", JOptionPane.INFORMATION_MESSAGE);
+                    SaveProgress.logFile("Computer win!");
+                } else if (sumComp == sumEnd) {
+                    hit = false;
+                    endGame = 1;
+                    //выводим диалоговое окно игроку
+                    JOptionPane.showMessageDialog(null,
+                            "Поздравляю! Вы выиграли!",
+                            "Вы выиграли", JOptionPane.INFORMATION_MESSAGE);
+                    SaveProgress.logFile("Player win!");
+                }
             }
         }
     }
@@ -266,16 +267,105 @@ public class Game {
             //увеличиваем на 1 количество ходов
             if (PvE == false) countComputerMove++;
             // Признак попадания в цель
-            boolean hit = false;
+            hit = false;
             // Признак выстрела в раненый корабль
             boolean injured = false;
             //признак направления корабля
             boolean horizontal = false;
             _for1:
-            // break метка
-            // Пробегаем все игровое поле игрока
-            for (int i = 0; i < 10; i++)
-                for (int j = 0; j < 10; j++)
+
+            if (difficulty == 0) {
+
+                //Линейный алгоритм
+                for (int i = 0; i < 10; i++)
+                    for (int j = 0; j < 10; j++)
+                        if ((mas[i][j] >= 9) && (mas[i][j] <= 11)) { //если находим раненую палубу
+                            injured = true;
+                            //ищем подбитую палубу слева и справа
+                            if ((ifMasOut(i - 3, j) && mas[i - 3][j] >= 9 && (mas[i - 3][j] <= 11))
+                                    || (ifMasOut(i - 2, j) && mas[i - 2][j] >= 9 && (mas[i - 2][j] <= 11))
+                                    || (ifMasOut(i - 1, j) && mas[i - 1][j] >= 9 && (mas[i - 1][j] <= 11))
+                                    || (ifMasOut(i + 3, j) && mas[i + 3][j] >= 9 && (mas[i + 3][j] <= 11))
+                                    || (ifMasOut(i + 2, j) && mas[i + 2][j] >= 9 && (mas[i + 2][j] <= 11))
+                                    || (ifMasOut(i + 1, j) && mas[i + 1][j] >= 9 && (mas[i + 1][j] <= 11))) {
+                                horizontal = true;
+                            } else if ((ifMasOut(i, j + 3) && mas[i][j + 3] >= 9 && (mas[i][j + 3] <= 11))
+                                    //ищем подбитую палубу сверху и снизу
+                                    || (ifMasOut(i, j + 2) && mas[i][j + 2] >= 9 && (mas[i][j + 2] <= 11))
+                                    || (ifMasOut(i, j + 1) && mas[i][j + 1] >= 9 && (mas[i][j + 1] <= 11))
+                                    || (ifMasOut(i, j - 3) && mas[i][j - 3] >= 9 && (mas[i][j - 3] <= 11))
+                                    || (ifMasOut(i, j - 2) && mas[i][j - 2] >= 9 && (mas[i][j - 2] <= 11))
+                                    || (ifMasOut(i, j - 1) && mas[i][j - 1] >= 9 && (mas[i][j - 1] <= 11))) {
+                                horizontal = false;
+                            }
+                            //если не удалось определить направление корабля, то выбираем произвольное направление для обстрела
+                            else for (int x = 0; x < 50; x++) {
+                                    int napr = (int) (Math.random() * 4);
+                                    if (napr == 0 && ifMasOut(i - 1, j) && (mas[i - 1][j] <= 4) && (mas[i - 1][j] != -2)) {
+                                        mas[i - 1][j] += 7;
+                                        //проверяем, убили или нет
+                                        ifDeath(mas, i - 1, j, false);
+                                        if (mas[i - 1][j] >= 8) hit = true;
+                                        else
+                                            SaveProgress.logFile(String.format("Computer shot %d,%d; status: miss\n", i - 1, j));
+                                        //прерываем цикл
+                                        break _for1;
+                                    } else if (napr == 1 && ifMasOut(i + 1, j) && (mas[i + 1][j] <= 4) && (mas[i + 1][j] != -2)) {
+                                        mas[i + 1][j] += 7;
+                                        ifDeath(mas, i + 1, j, false);
+                                        if (mas[i + 1][j] >= 8) hit = true;
+                                        else
+                                            SaveProgress.logFile(String.format("Computer shot %d,%d; status: miss\n", i + 1, j));
+                                        break _for1;
+                                    } else if (napr == 2 && ifMasOut(i, j - 1) && (mas[i][j - 1] <= 4) && (mas[i][j - 1] != -2)) {
+                                        mas[i][j - 1] += 7;
+                                        ifDeath(mas, i, j - 1, false);
+                                        if (mas[i][j - 1] >= 8) hit = true;
+                                        else
+                                            SaveProgress.logFile(String.format("Computer shot %d,%d; status: miss\n", i, j - 1));
+                                        break _for1;
+                                    } else if (napr == 3 && ifMasOut(i, j + 1) && (mas[i][j + 1] <= 4) && (mas[i][j + 1] != -2)) {
+                                        mas[i][j + 1] += 7;
+                                        ifDeath(mas, i, j + 1, false);
+                                        if (mas[i][j + 1] >= 8) hit = true;
+                                        else
+                                            SaveProgress.logFile(String.format("Computer shot %d,%d; status: miss\n", i, j + 1));
+                                        break _for1;
+                                    }
+                                }
+                            //если определили направление, то производим выстрел только в этом напрвлении
+                            if (horizontal) { //по горизонтали
+                                if (ifMasOut(i - 1, j) && (mas[i - 1][j] <= 4) && (mas[i - 1][j] != -2)) {
+                                    mas[i - 1][j] += 7;
+                                    ifDeath(mas, i - 1, j, false);
+                                    if (mas[i - 1][j] >= 8) hit = true;
+                                    break _for1;
+                                } else if (ifMasOut(i + 1, j) && (mas[i + 1][j] <= 4) && (mas[i + 1][j] != -2)) {
+                                    mas[i + 1][j] += 7;
+                                    ifDeath(mas, i + 1, j, false);
+                                    if (mas[i + 1][j] >= 8) hit = true;
+                                    break _for1;
+                                }
+                            }//по вертикали
+                            else if (ifMasOut(i, j - 1) && (mas[i][j - 1] <= 4) && (mas[i][j - 1] != -2)) {
+                                mas[i][j - 1] += 7;
+                                ifDeath(mas, i, j - 1, false);
+                                if (mas[i][j - 1] >= 8) hit = true;
+                                break _for1;
+                            } else if (ifMasOut(i, j + 1) && (mas[i][j + 1] <= 4) && (mas[i][j + 1] != -2)) {
+                                mas[i][j + 1] += 7;
+                                ifDeath(mas, i, j + 1, false);
+                                if (mas[i][j + 1] >= 8) hit = true;
+                                break _for1;
+                            }
+                        }
+            } else if (difficulty == 1) {
+
+                for (int l = 0; l < 100; l++) {
+                    //случайный алгоритм
+                    int i = (int) (Math.random() * 10);
+                    int j = (int) (Math.random() * 10);
+
                     if ((mas[i][j] >= 9) && (mas[i][j] <= 11)) { //если находим раненую палубу
                         injured = true;
                         //ищем подбитую палубу слева и справа
@@ -297,39 +387,39 @@ public class Game {
                         }
                         //если не удалось определить направление корабля, то выбираем произвольное направление для обстрела
                         else for (int x = 0; x < 50; x++) {
-                            int napr = (int) (Math.random() * 4);
-                            if (napr == 0 && ifMasOut(i - 1, j) && (mas[i - 1][j] <= 4) && (mas[i - 1][j] != -2)) {
-                                mas[i - 1][j] += 7;
-                                //проверяем, убили или нет
-                                ifDeath(mas, i - 1, j, false);
-                                if (mas[i - 1][j] >= 8) hit = true;
-                                else
-                                    SaveProgress.logFile(String.format("Computer shot %d,%d; status: miss\n", i-1, j));
-                                //прерываем цикл
-                                break _for1;
-                            } else if (napr == 1 && ifMasOut(i + 1, j) && (mas[i + 1][j] <= 4) && (mas[i + 1][j] != -2)) {
-                                mas[i + 1][j] += 7;
-                                ifDeath(mas, i + 1, j, false);
-                                if (mas[i + 1][j] >= 8) hit = true;
-                                else
-                                    SaveProgress.logFile(String.format("Computer shot %d,%d; status: miss\n", i+1, j));
-                                break _for1;
-                            } else if (napr == 2 && ifMasOut(i, j - 1) && (mas[i][j - 1] <= 4) && (mas[i][j - 1] != -2)) {
-                                mas[i][j - 1] += 7;
-                                ifDeath(mas, i, j - 1, false);
-                                if (mas[i][j - 1] >= 8) hit = true;
-                                else
-                                    SaveProgress.logFile(String.format("Computer shot %d,%d; status: miss\n",i, j-1));
-                                break _for1;
-                            } else if (napr == 3 && ifMasOut(i, j + 1) && (mas[i][j + 1] <= 4) && (mas[i][j + 1] != -2)) {
-                                mas[i][j + 1] += 7;
-                                ifDeath(mas, i, j + 1, false);
-                                if (mas[i][j + 1] >= 8) hit = true;
-                                else
-                                    SaveProgress.logFile(String.format("Computer shot %d,%d; status: miss\n", i, j+1));
-                                break _for1;
+                                int napr = (int) (Math.random() * 4);
+                                if (napr == 0 && ifMasOut(i - 1, j) && (mas[i - 1][j] <= 4) && (mas[i - 1][j] != -2)) {
+                                    mas[i - 1][j] += 7;
+                                    //проверяем, убили или нет
+                                    ifDeath(mas, i - 1, j, false);
+                                    if (mas[i - 1][j] >= 8) hit = true;
+                                    else
+                                        SaveProgress.logFile(String.format("Computer shot %d,%d; status: miss\n", i - 1, j));
+                                    //прерываем цикл
+                                    break _for1;
+                                } else if (napr == 1 && ifMasOut(i + 1, j) && (mas[i + 1][j] <= 4) && (mas[i + 1][j] != -2)) {
+                                    mas[i + 1][j] += 7;
+                                    ifDeath(mas, i + 1, j, false);
+                                    if (mas[i + 1][j] >= 8) hit = true;
+                                    else
+                                        SaveProgress.logFile(String.format("Computer shot %d,%d; status: miss\n", i + 1, j));
+                                    break _for1;
+                                } else if (napr == 2 && ifMasOut(i, j - 1) && (mas[i][j - 1] <= 4) && (mas[i][j - 1] != -2)) {
+                                    mas[i][j - 1] += 7;
+                                    ifDeath(mas, i, j - 1, false);
+                                    if (mas[i][j - 1] >= 8) hit = true;
+                                    else
+                                        SaveProgress.logFile(String.format("Computer shot %d,%d; status: miss\n", i, j - 1));
+                                    break _for1;
+                                } else if (napr == 3 && ifMasOut(i, j + 1) && (mas[i][j + 1] <= 4) && (mas[i][j + 1] != -2)) {
+                                    mas[i][j + 1] += 7;
+                                    ifDeath(mas, i, j + 1, false);
+                                    if (mas[i][j + 1] >= 8) hit = true;
+                                    else
+                                        SaveProgress.logFile(String.format("Computer shot %d,%d; status: miss\n", i, j + 1));
+                                    break _for1;
+                                }
                             }
-                        }
                         //если определили направление, то производим выстрел только в этом напрвлении
                         if (horizontal) { //по горизонтали
                             if (ifMasOut(i - 1, j) && (mas[i - 1][j] <= 4) && (mas[i - 1][j] != -2)) {
@@ -356,6 +446,8 @@ public class Game {
                             break _for1;
                         }
                     }
+                }
+            }
 
             // если нет ранненых кораблей
             if (injured == false) {

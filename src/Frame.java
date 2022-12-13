@@ -16,7 +16,7 @@ public class Frame extends JFrame {
     public JMenuItem menuFileSave;
     public JMenuItem menuFileLoad;
     public JMenuItem itemEasy;
-    public JMenuItem itemMedium;
+//    public JMenuItem itemMedium;
     public JMenuItem itemHard;
     private JMenuItem itemStartAuto;
     private JMenuItem itemStartRast;
@@ -72,6 +72,7 @@ public class Frame extends JFrame {
                     path = (saveFile.getSelectedFile().getAbsolutePath() + ".txt"); //Путь сохранения файлов
                     try {
                         SaveProgress.SaveFile(path);
+                        SaveProgress.logFile("File saved!\n");
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -89,6 +90,7 @@ public class Frame extends JFrame {
                     path = openFile.getSelectedFile().getAbsolutePath(); //Пусть загрузки файлов
                     try {
                         SaveProgress.LoadFile(path);
+                        SaveProgress.logFile("File loaded!\n");
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -100,20 +102,23 @@ public class Frame extends JFrame {
         itemEasy.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                pole.setEasy(); }
-        });
-        itemMedium=new JMenuItem("Medium");
-        itemMedium.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pole.setMedium();
+                pole.setEasy();
+                SaveProgress.logFile("Set difficult Easy.\n");
             }
         });
+//        itemMedium=new JMenuItem("Medium");
+//        itemMedium.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                pole.setMedium();
+//            }
+//        });
         itemHard=new JMenuItem("Hard");
         itemHard.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 pole.setHard();
+                SaveProgress.logFile("Set difficult Hard.\n");
             }
         });
 
@@ -124,7 +129,7 @@ public class Frame extends JFrame {
         menuFile.add(menuFileSave);
         menuFile.add(menuFileLoad);
         difficultyGame.add(itemEasy);
-        difficultyGame.add(itemMedium);
+//        difficultyGame.add(itemMedium);
         difficultyGame.add(itemHard);
         menuBar.add(menuGame);
         menuBar.add(menuFile);
