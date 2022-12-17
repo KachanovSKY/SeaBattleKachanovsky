@@ -97,6 +97,7 @@ public class Game {
                 }
             }
         });
+        System.out.println(Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory());
         thread.start();
     }
 
@@ -261,6 +262,8 @@ public class Game {
     }
 
     boolean computerMove(int mas[][]) { // Выстрел комьютера
+        long m = System.nanoTime();
+
         // если попал, иначе false
         //если идет автоигра или ход компьютера
         if ((endGame == 0 && PvE) || (computerMove && !PvE)) {
@@ -478,6 +481,7 @@ public class Game {
             }
             // проверяем конец игры
             ifEndGame();
+            System.out.println((double) (System.currentTimeMillis() - m));
             // возвращаем результат
             return hit; //true, если попал, иначе false
         }else return false;

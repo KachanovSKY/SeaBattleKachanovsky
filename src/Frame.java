@@ -24,6 +24,7 @@ public class Frame extends JFrame {
     String path = new String();
     Frame() {
         super("Морской бой");
+        setResizable(true);
         MyPanel pole=new MyPanel();
         menuBar=new JMenuBar();
         menuGame = new JMenu("Игра");
@@ -33,6 +34,7 @@ public class Frame extends JFrame {
 
         itemStartAuto =new JMenuItem("Авторасстановка");
         itemStartAuto.addActionListener(new ActionListener() {
+            long usedBytes = Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
             @Override
             public void actionPerformed(ActionEvent e) {
                 pole.start();
@@ -106,13 +108,6 @@ public class Frame extends JFrame {
                 SaveProgress.logFile("Set difficult Easy.\n");
             }
         });
-//        itemMedium=new JMenuItem("Medium");
-//        itemMedium.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                pole.setMedium();
-//            }
-//        });
         itemHard=new JMenuItem("Hard");
         itemHard.addActionListener(new ActionListener() {
             @Override
@@ -138,7 +133,8 @@ public class Frame extends JFrame {
         Container container=getContentPane();
         container.add(pole);
         setSize(pole.getSize());
-        setResizable(false);
+        setMinimumSize(new Dimension(1200, 800));
+        setResizable(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         try {
             setIconImage(ImageIO.read(getClass().getResource("image/icon.jpeg")));
