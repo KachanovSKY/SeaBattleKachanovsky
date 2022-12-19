@@ -16,7 +16,6 @@ public class Frame extends JFrame {
     public JMenuItem menuFileSave;
     public JMenuItem menuFileLoad;
     public JMenuItem itemEasy;
-//    public JMenuItem itemMedium;
     public JMenuItem itemHard;
     private JMenuItem itemStartAuto;
     private JMenuItem itemStartRast;
@@ -124,7 +123,6 @@ public class Frame extends JFrame {
         menuFile.add(menuFileSave);
         menuFile.add(menuFileLoad);
         difficultyGame.add(itemEasy);
-//        difficultyGame.add(itemMedium);
         difficultyGame.add(itemHard);
         menuBar.add(menuGame);
         menuBar.add(menuFile);

@@ -11,9 +11,6 @@ public class MyPanel extends JPanel {
     private  int DX1;
     private  int DX2;
     private int Wigth;
-    private int basicWigth;
-    private int Height;
-    private int basicHeight;
     private boolean rasstanovkaFlag = false;
 
 
@@ -43,8 +40,6 @@ public class MyPanel extends JPanel {
         setFocusable(true);
         game = new Game();
         setSize(1200,800);
-        basicWigth = 1200;
-        basicHeight = 800;
         difficult = new String("Easy");
         try {
             ranen = ImageIO.read(getClass().getResource("image/ranen.png"));
@@ -95,7 +90,7 @@ public class MyPanel extends JPanel {
         DX1 =  (this.getWidth() / 2) - 120;
         DX2 = (this.getWidth() / 6) - 140;
         Wigth = this.getWidth();
-        Height = this.getHeight();
+        this.getHeight();
         DY = ((this.getHeight() / 20) + 37);
         checkNapr.setBounds((this.getWidth() - 400) + (3*H),DY+10*H,7*H,H);
         Graphics2D g2= (Graphics2D) g;
@@ -323,11 +318,11 @@ public class MyPanel extends JPanel {
             g.setFont(new Font("Times New Roman", 0, H - 5));
             if (game.myMove) {
                 g.setColor(Color.green);
-                g.drawString("Ход игрока", (this.getWidth() - this.getWidth() / 20) - 200, this.getHeight() - (this.getHeight() / 20) - 60);
+                g.drawString("Ход игрока:", (this.getWidth() - this.getWidth() / 20) - 200, this.getHeight() - (this.getHeight() / 20) - 60);
             }
             else {
                 g.setColor(Color.red);
-                g.drawString("Ход игрока", (this.getWidth() - this.getWidth() / 20) - 200, this.getHeight() - (this.getHeight() / 20) - 60);
+                g.drawString("Ход компьютера:", (this.getWidth() - this.getWidth() / 20) - 200, this.getHeight() - (this.getHeight() / 20) - 60);
             }
         }if (Game.endGame == 1) {
             timer.stop();
@@ -384,7 +379,7 @@ public class MyPanel extends JPanel {
                 else
                     DX = DX1;
                 if ((rasstanovka && p1+p2+p3+p4==0) || !rasstanovka && !Game.PvE
-                        && mX > (DX + 1 * H) && mY > (DY) && mX < (DX + 10 * H) && mY < DY + 10 * H) {
+                        && mX > (DX ) && mY > (DY) && mX < (DX + 10 * H) && mY < DY + 10 * H) {
                     //если внутри поля бота и если не конец игры и ход игрока
                     if (game.myMove && Game.endGame ==0 && !game.computerMove) {
                         //то вычисляем элемент массива:

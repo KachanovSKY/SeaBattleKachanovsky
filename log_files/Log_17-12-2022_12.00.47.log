@@ -1,0 +1,37 @@
+дек. 17, 2022 12:00:47 PM SaveProgress logFile
+INFO: Start Game: Sat Dec 17 12:00:47 MSK 2022
+
+
+дек. 17, 2022 12:00:49 PM SaveProgress logFile
+INFO: Player shot 3,5; status: miss
+
+дек. 17, 2022 12:00:49 PM SaveProgress logFile
+INFO: Computer shot 0,9; status: miss
+
+дек. 17, 2022 12:00:50 PM SaveProgress logFile
+INFO: Player shot 3,4; status: miss
+
+дек. 17, 2022 12:00:50 PM SaveProgress logFile
+INFO: Computer shot 0,6; status: hit
+
+дек. 17, 2022 12:00:51 PM SaveProgress logFile
+INFO: Computer shot 0,5; status: miss
+
+дек. 17, 2022 12:00:52 PM SaveProgress logFile
+INFO: Player shot 3,3; status: miss
+
+дек. 17, 2022 12:00:53 PM SaveProgress logFile
+INFO: Computer shot 0,7; status: miss
+
+дек. 17, 2022 12:00:55 PM SaveProgress logFile
+INFO: Player shot 8,9; status: hit
+
+дек. 17, 2022 12:00:59 PM SaveProgress logFile
+INFO: Player shot 0,2; status: miss
+
+дек. 17, 2022 12:00:59 PM SaveProgress logFile
+INFO: Computer kill 2-pallubs ship
+
+дек. 17, 2022 12:01:00 PM SaveProgress logFile
+INFO: Computer shot 2,9; status: miss
+
