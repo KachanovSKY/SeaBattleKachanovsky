@@ -139,6 +139,7 @@ public class Frame extends JFrame {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        
         setVisible(true);
     }
 }

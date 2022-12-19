@@ -23,6 +23,7 @@ public class Game {
     public static boolean computerMove;
     public static int difficulty;// сложность игры
     boolean hit = false; // попал комп или нет
+    
 
     Thread thread=new Thread(); // Все атаки компьютера будут происходить в новом потоке
     Game() { // Конструктор двух полей
