@@ -39,6 +39,7 @@ public class Frame extends JFrame {
                 pole.start();
             }
         });
+        
         itemStartRast = new JMenuItem("Расставить корабли");
         itemStartRast.addActionListener(new ActionListener() {
             @Override
@@ -46,6 +47,7 @@ public class Frame extends JFrame {
                 pole.startRasstanovka();
             }
         });
+        
         itemExit=new JMenuItem("Выход");
         itemExit.addActionListener(new ActionListener() {
             @Override
@@ -53,6 +55,7 @@ public class Frame extends JFrame {
                 pole.exit();
             }
         });
+
         menuFileSave = new JMenuItem("Сохранить");
         menuFileSave.addActionListener(new ActionListener() {
 
